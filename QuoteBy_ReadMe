@@ -1,0 +1,76 @@
+Read Me for QuoteBy Script
+
+Overview
+The `QuoteBy` script is a command-line tool designed for managing and retrieving quotes from a CSV file. It allows users to append new quotes, search for quotes by a character, or get a random quote. 
+
+Prerequisites
+- Bash environment
+- `quotes.csv` file located in your home directory (`$HOME/quotes.csv`)
+
+Setting Up
+1. Ensure you have a `quotes.csv` file in your home directory. If not, create one using:
+
+   echo "Character Name, Quote" > ~/quotes.csv
+   echo "" >> ~/quotes.csv
+
+
+2. Make the script executable:
+
+   chmod +x /path/to/QuoteBy
+
+
+Usage
+The script has four primary functions:
+
+1. Append a Quote
+To add a new quote to your CSV file, use the command:
+
+./QuoteBy append 'Character Name' 'New Quote'
+
+Example:
+./QuoteBy append 'Darth Vader' 'I am your father.'
+
+
+This will add the quote "I am your father." under the character "Darth Vader" to your `quotes.csv` file.
+
+2. Search for a Quote by Character
+To find a quote by a specific character:
+
+./QuoteBy search 'Character Name'
+
+Example:
+./QuoteBy search 'Darth Vader'
+
+This will return a random quote from the character "Darth Vader" if available.
+
+3. Get a Random Quote
+To fetch a random quote from your CSV file:
+
+./QuoteBy random
+
+
+Example:
+./QuoteBy random
+
+
+This will display a random quote from any character.
+
+4. Display Help
+For usage instructions:
+
+./QuoteBy help
+
+
+or simply run:
+
+./QuoteBy
+
+
+Note
+The script checks for the existence of `quotes.csv` in your home directory at startup. If the file does not exist, it will prompt you to create one.
+
+Troubleshooting
+- Ensure `quotes.csv` is correctly formatted and located in your home directory.
+- Check if the script has executable permissions.
+
+For more assistance, use `./QuoteBy help`.
