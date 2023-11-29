@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# CSV file path
+CSV_FILE="$HOME/quotes.csv"
+
+# Check if quotes.csv exists
+if [ ! -f "$CSV_FILE" ]; then
+    echo "The Cake is a Lie. quotes.csv doesn't exist."
+    echo "You can create it by running the following commands:"
+    echo "echo \"Character Name, Quote\" > $CSV_FILE"
+    echo "echo \"\" >> $CSV_FILE"
+    exit 1
+fi
+
+# Function to append a quote to the CSV
+append_quote() {
+    local name="$1"
+    local new_quote="$2"
+
+    # Append the character and quote to the CSV
+    echo "\"$name\", \"$new_quote\"" >> "$CSV_FILE"
+}
+
+# Function to get a quote by a specific character
+get_quote_by_character() {
+    local character="$*"
+    local result
+
+    result=$(awk -v character="$character" 'BEGIN{FS=","; found=0} {
+        name = $1;
+        gsub(/"/, "", name);  # Remove double quotes from name
+        if (index(name, character) != 0) {
+            $1 = "";  # Remove the character name
+            sub(/^,/, "");  # Remove the leading comma
+            gsub(/"/, "");  # Remove double quotes from quote
+            print $0 " - " name;
+            found=1;
+        }
+    } END {
+        if (found == 0) {
+            print "No Quotes by them Bruh. Sorry.";
+        }
+    }' "$CSV_FILE" | shuf -n 1)
+
+    echo "$result"
+}
+
+# Function to get a random quote
+get_random_quote() {
+    local result
+
+    result=$(awk -F, '{
+        if (NF > 1) {
+            name = $1;
+            quote = $2;
+            for (i = 3; i <= NF; i++) quote = quote FS $i;
+            gsub(/^ /, "", quote);
+            print quote " - " name;
+        }
+    }' "$CSV_FILE" | shuf -n 1)
+
+    echo "$result"
+}
+
+# Function to display help
+display_help() {
+    echo "Usage:"
+    echo "  ./QuoteBy append 'Character Name' 'New Quote'"
+    echo "  ./QuoteBy search 'Character Name'"
+    echo "  ./QuoteBy random"
+    echo "  ./QuoteBy help (or ./manage_quotes.sh)"
+}
+
+# Main script
+case $1 in
+    "append")
+        if [ -z "$2" ] || [ -z "$3" ]; then
+            echo "Usage: ./QuoteBy append 'Character Name' 'New Quote'"
+            exit 1
+        fi
+        append_quote "$2" "$3"
+        ;;
+    "search")
+        if [ -z "$2" ]; then
+            echo "Usage: ./QuoteBy search 'Character Name'"
+            exit 1
+        fi
+        get_quote_by_character "$2"
+        ;;
+    "random")
+        get_random_quote
+        ;;
+    "help" | "")
+        display_help
+        ;;
+    *)
+        echo "Invalid command. Use './QuoteBy help' for usage instructions."
+        exit 1
+        ;;
+esac
